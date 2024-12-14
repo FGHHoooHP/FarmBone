@@ -1,4 +1,36 @@
+(getgenv()).Config = {
+    ["FastAttack"] = true,
+} 
 
+local CombatFramework = require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework)
+local Camera = require(game.ReplicatedStorage.Util.CameraShaker)
+Camera:Stop()
+
+coroutine.wrap(function()
+    game:GetService("RunService").Stepped:Connect(function()
+        if getgenv().Config['FastAttack'] then
+            pcall(function()
+                local upvalues = getupvalues(CombatFramework)
+                local activeController = upvalues[2]['activeController']
+                
+                if activeController then
+                    activeController.timeToNextAttack = 50
+                    activeController.blocking = false
+                    activeController.hitboxMagnitude = 120
+                    activeController:attack()
+                end
+            end)
+        end
+    end)
+end)()
+
+			if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+				local args = {
+					[1] = "Buso"
+				}
+				game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+
+end
 
 spawn(function()
     while true do
