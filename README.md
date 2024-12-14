@@ -1,3 +1,5 @@
+
+
 spawn(function()
     while true do
         local enemy = workspace.Enemies:FindFirstChild("Posessed Mummy")
@@ -7100,5 +7102,43 @@ end
 wait(1)
 
 -- รับตำแหน่งของผู้เล่น
+
+
 local player = game.Players.LocalPlayer local character = player.Character local humanoidRootPart = character:WaitForChild("HumanoidRootPart") local function checkAndTeleportPlayer() for _, enemy in pairs(workspace.Enemies:GetChildren()) do  if enemy.Name == "Posessed Mummy" then local enemyPosition = enemy:WaitForChild("HumanoidRootPart").Position local distance = (humanoidRootPart.Position - enemyPosition).Magnitude if distance <= 20 then local direction = (humanoidRootPart.Position - enemyPosition).unit local newPosition = humanoidRootPart.Position + direction * 5  humanoidRootPart.CFrame = CFrame.new(newPosition) end  end end end while true do checkAndTeleportPlayer() wait(0) end
 wait(1)
+
+
+
+(getgenv()).Config = {
+    ["FastAttack"] = true,
+} 
+
+local CombatFramework = require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework)
+local Camera = require(game.ReplicatedStorage.Util.CameraShaker)
+Camera:Stop()
+
+coroutine.wrap(function()
+    game:GetService("RunService").Stepped:Connect(function()
+        if getgenv().Config['FastAttack'] then
+            pcall(function()
+                local upvalues = getupvalues(CombatFramework)
+                local activeController = upvalues[2]['activeController']
+                
+                if activeController then
+                    activeController.timeToNextAttack = 50
+                    activeController.blocking = false
+                    activeController.hitboxMagnitude = 120
+                    activeController:attack()
+                end
+            end)
+        end
+    end)
+end)()
+
+			if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+				local args = {
+					[1] = "Buso"
+				}
+				game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+
+
